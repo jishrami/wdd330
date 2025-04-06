@@ -1,7 +1,6 @@
-const apiKey = process.env.NEWS_API_KEY;
-
+// Fetch headlines from backend
 async function fetchArticles() {
-    const response = await fetch(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`);
+    const response = await fetch('/api/headlines');
     const data = await response.json();
     return data.articles;
 }
@@ -13,9 +12,9 @@ export async function buildHeadline() {
     try {
         const articles = await fetchArticles();
 
-        if (articles.length === 0) {
+        if (!articles || articles.length === 0) {
             articlesEl.innerHTML = `<p>No articles found.</p>`;
-            document.querySelector('home').appendChild(articlesEl);
+            document.querySelector('#home').appendChild(articlesEl);
             return;
         }
 
@@ -23,7 +22,7 @@ export async function buildHeadline() {
             const headlineEl = document.createElement('article');
             headlineEl.innerHTML = `
                 <h2><a href="article.html?title=${encodeURIComponent(article.title)}">${article.title}</a></h2>
-                <p>${article.description}</p>
+                <p>${article.description || ''}</p>
             `;
             articlesEl.appendChild(headlineEl);
         });
@@ -35,7 +34,7 @@ export async function buildHeadline() {
     document.querySelector('#home').appendChild(articlesEl);
 }
 
-// Fetch article from API by title
+// Fetch article from API by title (from backend)
 async function fetchArticle(title) {
     try {
         const response = await fetch(`/api/article?title=${encodeURIComponent(title)}`);
@@ -52,7 +51,7 @@ async function fetchArticle(title) {
     }
 }
 
-// Display the article natively
+// Display article content
 function showArticle(article) {
     const articleEl = document.createElement('article');
     articleEl.innerHTML = `
@@ -79,18 +78,9 @@ export async function buildArticle() {
     }
 
     try {
-        // Optional: Check auth
-        // const res = await fetch('/api/check-auth');
-        // const authData = await res.json();
-        // if (!authData.authenticated) {
-        //     window.location.href = '/login.html';
-        //     return;
-        // }
-
         const article = await fetchArticle(articleTitle);
         contentEl.innerHTML = '';
         contentEl.appendChild(showArticle(article));
-
     } catch (error) {
         contentEl.innerHTML = `<p>Unable to load the article.</p>`;
     }
