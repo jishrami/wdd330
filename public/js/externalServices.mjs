@@ -1,4 +1,4 @@
-const apiKey = 'b1441609e32c4a419e7bdd7b9c5c2786';
+const apiKey = process.env.NEWS_API_KEY;
 
 async function fetchArticles() {
     const response = await fetch(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`);
