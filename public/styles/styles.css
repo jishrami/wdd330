@@ -7,3 +7,93 @@
 body {
     font-family: Tahoma, Verdana, sans-serif;
 }
+
+a {
+    color: #333;
+}
+
+a:visited {
+    color: #333;
+}
+
+header {
+    background-color: #333;
+    text-align: center;
+    color: #fff;
+    padding: 1rem;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+nav li {
+    list-style: none;
+    margin: 0 1rem;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border: #ccc 1px solid;
+}
+
+nav a:visited {
+    color: #fff;
+}
+
+main {
+    text-align: center;
+    margin: 1rem;
+}
+
+#articles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1rem;
+    justify-content: center;
+    margin: 1rem auto;
+    max-width: 75%;
+}
+
+.headline {
+    border: 1px solid #ccc;
+    border-radius: 1rem;
+    padding: 1rem;
+    margin: 0 auto;
+    width: 90%;
+    max-width: 800px;
+}
+
+.headline p {
+    text-align: left;
+}
+
+.article {
+    border: 1px solid #ccc;
+    border-radius: 1rem;
+    padding: 1rem;
+    margin: 1rem auto;
+    width: 90%;
+    max-width: 800px;
+}
+
+#article-content, #article-description {
+    margin-top: 1rem;
+    text-align: left;
+}
+
+#article-author {
+    font-size: small;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+}

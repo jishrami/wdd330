@@ -6,32 +6,30 @@ async function fetchArticles() {
 }
 
 export async function buildHeadline() {
-    const articlesEl = document.createElement('div');
-    articlesEl.classList.add('articles');
+    let articlesEl = document.getElementById('articles');
 
     try {
         const articles = await fetchArticles();
 
         if (!articles || articles.length === 0) {
             articlesEl.innerHTML = `<p>No articles found.</p>`;
-            document.querySelector('#home').appendChild(articlesEl);
             return;
         }
 
+        articlesEl.innerHTML = '';
         articles.forEach(article => {
-            const headlineEl = document.createElement('article');
-            headlineEl.innerHTML = `
+            const headlineContent = `
+            <div class="headline">
                 <h2><a href="article.html?title=${encodeURIComponent(article.title)}">${article.title}</a></h2>
                 <p>${article.description || ''}</p>
+            </div>
             `;
-            articlesEl.appendChild(headlineEl);
+            articlesEl.innerHTML += headlineContent;
         });
 
     } catch (error) {
         console.error(error);
     }
-
-    document.querySelector('#home').appendChild(articlesEl);
 }
 
 // Fetch article from API by title (from backend)
@@ -53,13 +51,14 @@ async function fetchArticle(title) {
 
 // Display article content
 function showArticle(article) {
-    const articleEl = document.createElement('article');
+    const articleEl = document.createElement('div');
+    articleEl.classList.add('article');
     articleEl.innerHTML = `
-        <h1>${article.title}</h1>
-        <p><strong>By ${article.author || 'Unknown author'}</strong> - ${new Date(article.publishedAt).toLocaleString()}</p>
-        <p>${article.description || ''}</p>
-        <p>${article.content || ''}</p>
-        <a href="${article.url}" target="_blank">Read full article</a>
+        <h2 id="article-title">${article.title}</h2>
+        <p id="article-author"><strong>By ${article.author || 'Unknown author'}</strong> - ${new Date(article.publishedAt).toLocaleString()}</p>
+        <p id="article-description">${article.description || ''}</p>
+        <p id="article-content">${article.content || ''}</p>
+        <a href="${article.url}" target="_blank" id="article-link">Read full article</a>
     `;
 
     return articleEl;
@@ -77,11 +76,60 @@ export async function buildArticle() {
         return;
     }
 
-    try {
-        const article = await fetchArticle(articleTitle);
-        contentEl.innerHTML = '';
-        contentEl.appendChild(showArticle(article));
-    } catch (error) {
-        contentEl.innerHTML = `<p>Unable to load the article.</p>`;
+    const isAuthenticated = await checkAuth();
+
+    if (!isAuthenticated) {
+        contentEl.innerHTML = `<h2>Please <a href="/login">login</a> to view this article.</h2>`;
+        return;
+    } else {
+        try {
+            const article = await fetchArticle(articleTitle);
+            contentEl.innerHTML = '';
+            contentEl.appendChild(showArticle(article));
+        } catch (error) {
+            contentEl.innerHTML = `<p>Unable to load the article.</p>`;
+        }
     }
 }
+
+
+async function checkAuth() {
+    try {
+        const response = await fetch('/api/check-auth');
+        if (!response.ok) {
+            return false;
+        }
+
+        const data = await response.json();
+        return data.authenticated === true;
+    } catch (error) {
+        console.error('Authentication check failed:', error);
+        return false;
+    }
+}
+
+
+export async function Nav() {
+    const navEl = document.createElement("nav");
+
+    const authorized = await checkAuth();
+
+    if (authorized) {
+        navEl.innerHTML = `
+        <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/profile">Profile</a></li>
+        <li><a href="/logout" class="login_btn">Logout</a></li>
+        </ul>
+        `;
+    } else {
+        navEl.innerHTML = `
+        <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/login" class="login_btn">Login</a></li>
+        </ul>
+        `;
+    }
+
+    return navEl;
+};

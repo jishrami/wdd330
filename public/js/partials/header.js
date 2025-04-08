@@ -1,9 +1,13 @@
-export function header() {
+import { Nav } from "../externalServices.mjs";
+
+export async function header() {
     const headerEl = document.getElementById("main-header");
 
     const headerContent = `
-    <h1><a href="/">WDD330 Final Project</a></h1>
+    <h1>WDD330 Final Project</h1>
     `;
-
     headerEl.innerHTML = headerContent;
+
+    const nav = await Nav();
+    headerEl.appendChild(nav);
 };
