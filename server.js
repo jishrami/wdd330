@@ -7,7 +7,7 @@ const config = {
     authRequired: false,
     auth0Logout: true,
     secret: process.env.AUTH_CONFIG_SECRET,
-    baseURL: 'http://localhost:3000',
+    baseURL: 'https://wdd330-final-project-lhon.onrender.com',
     clientID: process.env.AUTH_CONFIG_CLIENT,
     issuerBaseURL: 'https://dev-4e58fapyk1mxc5ih.us.auth0.com'
 }
